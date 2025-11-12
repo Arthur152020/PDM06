@@ -89,7 +89,6 @@ Este projeto utiliza a **NewsAPI** (https://newsapi.org) como fonte de dados par
 ```
 / (raiz)
 ├── README.md
-├── contexto_pdm.txt
 ├── app.json
 ├── index.ts
 ├── package.json
