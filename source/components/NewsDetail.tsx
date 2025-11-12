@@ -7,7 +7,9 @@ interface NewsDetailProps {
     onBack: () => void;
 }
 
+// Componente da tela de detalhes de uma notícia
 export default function NewsDetail({ news, onBack }: NewsDetailProps) {
+    // Formata a data para exibição no formato brasileiro com hora
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('pt-BR', {
@@ -21,16 +23,20 @@ export default function NewsDetail({ news, onBack }: NewsDetailProps) {
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-            {news.image_url && (
-                <Image source={{ uri: news.image_url }} style={styles.image} />
+            {/* Imagem da notícia (se disponível) */}
+            {news.urlToImage && (
+                <Image source={{ uri: news.urlToImage }} style={styles.image} />
             )}
             <View style={styles.content}>
                 <Text style={styles.title}>{news.title}</Text>
+                {/* Metadados: fonte e data */}
                 <View style={styles.meta}>
-                    <Text style={styles.source}>{news.source}</Text>
-                    <Text style={styles.date}>{formatDate(news.published_at)}</Text>
+                    <Text style={styles.source}>{news.source.name}</Text>
+                    <Text style={styles.date}>{formatDate(news.publishedAt)}</Text>
                 </View>
-                <Text style={styles.description}>{news.description || news.snippet}</Text>
+                {/* Descrição ou conteúdo da notícia */}
+                <Text style={styles.description}>{news.description || news.content}</Text>
+                {/* URL da fonte original */}
                 {news.url && (
                     <Text style={styles.url}>Fonte: {news.url}</Text>
                 )}

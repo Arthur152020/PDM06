@@ -7,20 +7,24 @@ interface HomeProps {
     onNewsPress: (news: News) => void;
 }
 
+// Componente da tela principal com feed de notícias
 export default function Home({ onNewsPress }: HomeProps) {
     const { news, loading, error, searchTerm, refresh, search, setSearchTerm } = useNews();
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
+    // Executa a busca de notícias com o termo atual
     const handleSearch = async () => {
         await search(searchTerm);
     };
 
+    // Atualiza o feed de notícias (pull-to-refresh)
     const handleRefresh = async () => {
         setRefreshing(true);
         await refresh();
         setRefreshing(false);
     };
 
+    // Formata a data para exibição no formato brasileiro
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('pt-BR', {
@@ -30,28 +34,30 @@ export default function Home({ onNewsPress }: HomeProps) {
         });
     };
 
+    // Renderiza cada item da lista de notícias
     const renderNewsItem = ({ item }: { item: News }) => (
         <TouchableOpacity
             style={styles.card}
             onPress={() => onNewsPress(item)}
             activeOpacity={0.7}
         >
-            {item.image_url && (
-                <Image source={{ uri: item.image_url }} style={styles.image} />
+            {item.urlToImage && (
+                <Image source={{ uri: item.urlToImage }} style={styles.image} />
             )}
             <View style={styles.cardContent}>
                 <Text style={styles.title}>{item.title}</Text>
                 <Text style={styles.snippet} numberOfLines={2}>
-                    {item.snippet || item.description}
+                    {item.description}
                 </Text>
                 <View style={styles.footer}>
-                    <Text style={styles.source}>{item.source}</Text>
-                    <Text style={styles.date}>{formatDate(item.published_at)}</Text>
+                    <Text style={styles.source}>{item.source.name}</Text>
+                    <Text style={styles.date}>{formatDate(item.publishedAt)}</Text>
                 </View>
             </View>
         </TouchableOpacity>
     );
 
+    // Exibe indicador de carregamento quando está carregando e não há notícias
     if (loading && news.length === 0)
         return (
             <View style={styles.containerSpinner}>
@@ -60,6 +66,7 @@ export default function Home({ onNewsPress }: HomeProps) {
             </View>
         );
 
+    // Exibe mensagem de erro quando há erro e não há notícias
     if (error && news.length === 0)
         return (
             <View style={styles.containerSpinner}>
@@ -70,6 +77,7 @@ export default function Home({ onNewsPress }: HomeProps) {
 
     return (
         <View style={styles.container}>
+            {/* Barra de busca */}
             <View style={styles.searchContainer}>
                 <TextInput
                     style={styles.searchInput}
@@ -82,6 +90,7 @@ export default function Home({ onNewsPress }: HomeProps) {
                     <Button title="Buscar" onPress={handleSearch} />
                 </View>
             </View>
+            {/* Lista de notícias ou mensagem de vazio */}
             {news.length === 0 && !loading ? (
                 <View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>Nenhuma notícia encontrada</Text>
@@ -91,7 +100,7 @@ export default function Home({ onNewsPress }: HomeProps) {
                 <FlatList
                     data={news}
                     renderItem={renderNewsItem}
-                    keyExtractor={(item) => item.uuid}
+                    keyExtractor={(item, index) => item.url || `news-${index}`}
                     contentContainerStyle={styles.listContent}
                     refreshControl={
                         <RefreshControl

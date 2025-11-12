@@ -2,19 +2,20 @@
 
 ## Sobre a API Utilizada
 
-Este projeto utiliza a **TheNewsAPI** (https://www.thenewsapi.com) como fonte de dados para o feed de notícias.
+Este projeto utiliza a **NewsAPI** (https://newsapi.org) como fonte de dados para o feed de notícias.
 
-**Motivo da escolha:** A API NewsAPI (newsapi.org) estava com cadastro indisponível no momento do desenvolvimento, então optamos pela TheNewsAPI como alternativa.
+**Endpoints utilizados:**
+- `/v2/top-headlines`: Para exibir as principais notícias do Brasil
+- `/v2/everything`: Para buscar notícias por palavra-chave
 
 **Limitações do Plano Gratuito:**
-- O plano gratuito da TheNewsAPI possui limitações que resultam em **apenas 3 notícias** retornadas por requisição.
-- Esta é uma limitação da própria API, não uma configuração do nosso código.
-- No código, o limite está configurado para 20 notícias (`limit: number = 20` no `NewsService`), mas a API gratuita retorna apenas 3 resultados independentemente do valor solicitado.
+- O plano gratuito da NewsAPI possui algumas limitações de uso.
+- No código, o limite está configurado para 20 notícias (`limit: number = 20` no `NewsService`).
 
 ## Visão Geral
 
 - Aplicativo React Native com Expo implementando o padrão de arquitetura **MVVM (Model-View-ViewModel)**.
-- Feed de notícias dinâmico obtido da API pública TheNewsAPI.
+- Feed de notícias dinâmico obtido da API pública NewsAPI.
 - Funcionalidades: busca por palavra-chave, pull-to-refresh, tela de detalhes e tratamento de erros.
 
 ## Conceitos (Didático)
@@ -62,10 +63,10 @@ Este projeto utiliza a **TheNewsAPI** (https://www.thenewsapi.com) como fonte de
 ### Model
 
 - **`source/model/entities/news.ts`**
-  - Interface `News` com campos: `uuid`, `title`, `description`, `snippet`, `url`, `image_url`, `language`, `published_at`, `source`.
+  - Interface `News` com campos: `title`, `description`, `url`, `urlToImage`, `publishedAt`, `source` (objeto com `id` e `name`), `author`, `content`.
 
 - **`source/model/services/newsService.ts`**
-  - Serviço `NewsService.getNews()` usa `axios` para obter dados da TheNewsAPI.
+  - Serviço `NewsService.getNews()` usa `axios` para obter dados da NewsAPI.
   - Parâmetros: `search` (opcional), `limit` (padrão: 20).
   - Retorna `Promise<News[]>` tipada.
   - Tratamento de erro deixado para o ViewModel.
@@ -147,10 +148,10 @@ Para executar o projeto localmente:
 
 ## Configuração da API
 
-O token da API está configurado no arquivo `source/model/services/newsService.ts`:
+A chave da API está configurada no arquivo `source/model/services/newsService.ts`:
 
 ```typescript
-const API_TOKEN = 'EqPbh38sjKDyYorAB1ph69dOqtEShJgyf9nuvjBB';
+const API_KEY = '0e05347ee3924850956ad491ef160c6e';
 ```
 
 **Nota:** Em produção, o token deveria estar em variável de ambiente (`.env`), mas por questões didáticas está no código.
